@@ -201,5 +201,3 @@ else:
 
             else:
                 st.error("Video file not found")
-            
-            st.write("Video path:", video_path)
