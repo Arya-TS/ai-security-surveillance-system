@@ -111,7 +111,3 @@ streamlit run app.py
 - Large files (videos, images, database) are excluded via `.gitignore`
 
 ---
-
-## 👨‍💻 Author
-
-Developed as part of a Computer Vision / AI Security project.
