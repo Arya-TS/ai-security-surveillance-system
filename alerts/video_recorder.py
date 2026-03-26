@@ -41,7 +41,7 @@ def start_event(frame):
     recording = True
     start_time = time.time()
 
-    print(f"[EVENT] Recording started: {current_video_path}")
+    # print(f"[EVENT] Recording started: {current_video_path}")
 
 
 def update_event(frame):
@@ -53,6 +53,7 @@ def update_event(frame):
 
     video_writer.write(frame)
 
+    # auto stop after duration
     if time.time() - start_time > EVENT_DURATION:
 
         video_writer.release()
@@ -62,8 +63,27 @@ def update_event(frame):
         recording = False
         current_video_path = None
 
-        print(f"[EVENT] Recording finished: {finished_path}")
+        # print(f"[EVENT] Recording finished: {finished_path}")
 
         return finished_path
 
     return None
+
+
+def stop_event():
+
+    global recording, video_writer, current_video_path
+
+    if not recording:
+        return None
+
+    video_writer.release()
+
+    finished_path = current_video_path
+
+    recording = False
+    current_video_path = None
+
+    # print(f"[EVENT] Recording stopped manually: {finished_path}")
+
+    return finished_path

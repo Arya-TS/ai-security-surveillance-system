@@ -33,6 +33,6 @@ def save_unknown(frame):
 
     insert_unknown(timestamp, filename)
 
-    print(f"[ALERT] Unknown face saved: {filename}")
+    # print(f"[ALERT] Unknown face saved: {filename}")
 
     return filename

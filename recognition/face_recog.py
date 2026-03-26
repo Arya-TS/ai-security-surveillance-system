@@ -26,22 +26,28 @@ def load_faces(folder):
 def recognize(frame):
 
     if frame is None or frame.size == 0:
-        return "Unknown"
+        return []
 
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    face_locations = face_recognition.face_locations(rgb)
+    locations = face_recognition.face_locations(rgb)
 
-    if len(face_locations) == 0:
-        return "Unknown"
+    if len(locations) == 0:
+        return []
 
-    encodings = face_recognition.face_encodings(rgb, face_locations)
+    encodings = face_recognition.face_encodings(rgb, locations)
+
+    names = []
 
     for encoding in encodings:
 
         matches = face_recognition.compare_faces(known_encodings, encoding)
 
-        if True in matches:
-            return known_names[matches.index(True)]
+        name = "Unknown"
 
-    return "Unknown"
+        if True in matches:
+            name = known_names[matches.index(True)]
+
+        names.append(name)
+
+    return names

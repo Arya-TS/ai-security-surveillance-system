@@ -5,7 +5,7 @@ from datetime import datetime
 from recognition.face_recog import load_faces, recognize
 from detection.person_detector import detect_person
 from alerts.alert_manager import save_unknown
-from alerts.video_recorder import start_event, update_event
+from alerts.video_recorder import start_event, update_event, stop_event
 from database.db_manager import init_db, insert_alert
 from tracking.tracker import track_detections
 from tracking.track_manager import TrackManager
@@ -24,7 +24,7 @@ if not cap.isOpened():
     exit()
 
 face_cache = {}
-CACHE_TIME = 3
+CACHE_TIME = 2
 
 intrusion_active = False
 intrusion_image = None
@@ -64,11 +64,13 @@ while True:
             or time.time() - face_cache[track_id][1] > CACHE_TIME
         ):
 
-            name = recognize(person_crop)
+            names = recognize(person_crop)
+            name = names[0] if len(names) > 0 else "Unknown"
 
             if name == "Unknown":
 
                 if not intrusion_active:
+
                     intrusion_active = True
                     intrusion_name = name
 
@@ -76,14 +78,13 @@ while True:
 
                     start_event(frame)
 
-                    print("[INTRUSION] Unknown person detected")
+                    # print("[INTRUSION] Unknown person detected")
 
             face_cache[track_id] = (name, time.time())
 
         name = face_cache[track_id][0]
 
         color = (0, 255, 0)
-
         if name == "Unknown":
             color = (0, 0, 255)
 
@@ -112,7 +113,7 @@ while True:
             finished_video
         )
 
-        print("[ALERT] Intrusion event saved")
+        # print("[ALERT] Saved after 10 sec recording")
 
         intrusion_active = False
         intrusion_image = None
@@ -126,7 +127,26 @@ while True:
 
     cv2.imshow("AI Surveillance Camera", frame)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    key = cv2.waitKey(1) & 0xFF
+
+    # MANUAL STOP
+    if key == ord('q'):
+
+        finished_video = stop_event()
+
+        if finished_video and intrusion_active:
+
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            insert_alert(
+                intrusion_name,
+                timestamp,
+                intrusion_image,
+                finished_video
+            )
+
+            # print("[ALERT] Saved on manual exit")
+
         break
 
 
