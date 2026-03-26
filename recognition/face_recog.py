@@ -1,7 +1,6 @@
 import face_recognition
 import os
 import cv2
-import numpy as np
 
 known_encodings = []
 known_names = []
@@ -27,15 +26,14 @@ def load_faces(folder):
 def recognize(frame):
 
     if frame is None or frame.size == 0:
-        return [], []
+        return []
 
-    # convert to RGB
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     locations = face_recognition.face_locations(rgb)
 
     if len(locations) == 0:
-        return [], []
+        return []
 
     encodings = face_recognition.face_encodings(rgb, locations)
 
@@ -44,12 +42,12 @@ def recognize(frame):
     for encoding in encodings:
 
         matches = face_recognition.compare_faces(known_encodings, encoding)
+
         name = "Unknown"
 
         if True in matches:
-            first_match = matches.index(True)
-            name = known_names[first_match]
+            name = known_names[matches.index(True)]
 
         names.append(name)
 
-    return locations, names
+    return names
