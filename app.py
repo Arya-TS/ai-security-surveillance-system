@@ -137,22 +137,4 @@ else:
             else:
                 st.warning("Image file not found")
 
-<<<<<<< HEAD
-
-        # ---------- VIDEO DISPLAY ----------
-
-        if st.session_state.show_video == alert_id:
-
-            video_path = row["video_path"]
-
-            if video_path and os.path.exists(video_path):
-
-                st.video(video_path)
-
-                st.caption(video_path)
-
-            else:
-                st.error("Video file not found")
-=======
         st.divider()
->>>>>>> demo-improvements
